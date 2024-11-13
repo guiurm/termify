@@ -1,0 +1,6 @@
+./src/**/*.css
+./src/**/*.scss
+./src/**/*.json
+./src/**/*.md
+.gitignore
+*.wasm
