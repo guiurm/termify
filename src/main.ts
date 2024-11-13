@@ -5,12 +5,14 @@ import { TOption, TOptionToParsedOption, TOptionType } from './types';
 import { extractOptionKey, isOption, parseOptionValue, resolveOptionValue } from './utils/optionUtils';
 
 class CommandParser<CommandName extends string, Options extends Array<TOption<TOptionType, any>>> {
-    private readonly commandName: CommandName;
-    private readonly options: Options;
+    private readonly _commandName: CommandName;
+    private readonly _options: Options;
+    private _action: (data: { options: TOptionToParsedOption<Options[number]>[] }) => void;
 
     constructor(commandName: CommandName, options: Options = [] as unknown as Options) {
-        this.commandName = commandName;
-        this.options = options;
+        this._commandName = commandName;
+        this._options = options;
+        this._action = () => {};
     }
 
     public parseArguments(args: string[]): void {
@@ -48,17 +50,23 @@ class CommandParser<CommandName extends string, Options extends Array<TOption<TO
                 } as TOptionToParsedOption<Options[number]>);
             }
         }
+
+        this._action({ options: parsedOptions });
     }
 
     private findOption(argument: string) {
         const key = extractOptionKey(argument);
         if (!key) return undefined;
 
-        return this.options.find(option => {
+        return this._options.find(option => {
             return (
                 extractOptionKey(option.flag) === key || option.alias?.some(alias => extractOptionKey(alias) === key)
             );
         });
+    }
+
+    public action(fn: typeof this._action) {
+        this._action = fn;
     }
 }
 
@@ -66,5 +74,8 @@ const command = new CommandParser('ci', [
     { optionType: 'string', required: true, flag: '-url', alias: ['--web-url'], defaultValue: 'abc.com' },
     { optionType: 'number', required: true, flag: '-to', defaultValue: 1 }
 ] as const);
+command.action(({ options }) => {
+    console.log(options);
+});
 
 command.parseArguments(process.argv.slice(2));
