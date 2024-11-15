@@ -8,33 +8,33 @@ export const parseOptionValue = (option: string) => {
     if (!match) return null;
 
     const [, key, value] = match;
-    return { key, value: value || undefined };
+    return { key, value: value ?? null };
 };
 
 export const resolveOptionValue = <T extends TOptionType>({
     optionType,
     value,
-    defaultValue
+    validator
 }: {
     optionType: T;
     value?: TOptionTypeValue<T>;
-    defaultValue?: TOptionTypeValue<T>;
-}): TOptionTypeValue<T> => {
-    if (optionType === 'undefined' || optionType === 'boolean') {
-        return (value ?? defaultValue ?? true) as TOptionTypeValue<T>;
-    }
+    validator?: (data: any) => TOptionTypeValue<T>;
+}): TOptionTypeValue<T> | undefined => {
+    if (validator) return validator(value as TOptionTypeValue<T>);
 
-    if (value === undefined && defaultValue === undefined) {
-        throw new CommandError('Value is required but not provided');
+    if (optionType === 'undefined' || optionType === 'boolean') {
+        return (value ?? true) as TOptionTypeValue<T>;
     }
 
     switch (optionType) {
         case 'string':
-            return value ?? (defaultValue as TOptionTypeValue<T>);
+            return value;
         case 'number':
-            return parseFloat((value ?? defaultValue) as string) as TOptionTypeValue<T>;
+            const v = parseFloat(value as string);
+            if (isNaN(v)) throw new CommandError('Value given is not number');
+            return v as TOptionTypeValue<T>;
         default:
-            return value ?? (defaultValue as TOptionTypeValue<T>);
+            return value;
     }
 };
 
