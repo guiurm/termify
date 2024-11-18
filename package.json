@@ -6,7 +6,7 @@
     "scripts": {
         "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
         "dev2": "ts-node -r tsconfig-paths/register src/main.ts myapp -url qqq.com",
-        "dev": "ts-node -r tsconfig-paths/register src/main.ts myapp --web-url qqq.com -to=1 some_extra_data",
+        "dev": "ts-node -r tsconfig-paths/register src/main.ts ci -p 80 --env=./.env www.doamin.com some_token",
         "dev3": "ts-node -r tsconfig-paths/register src/main.ts myapp -f --verbose --output=file.txt --foo=bar somePositionalArg -- someOtherArg",
         "format": "prettier --ignore-path .prettierignore --write src/"
     },
@@ -20,9 +20,5 @@
         "tsc-alias": "^1.8.10",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.6.3"
-    },
-    "dependencies": {
-        "@types/commander": "^2.12.5",
-        "commander": "^12.1.0"
     }
 }

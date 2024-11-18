@@ -4,3 +4,4 @@
 ./src/**/*.md
 .gitignore
 *.wasm
+package-lock.json

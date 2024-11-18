@@ -1,5 +1,5 @@
 import CommandError from '../CommandError';
-import { TOptionType, TOptionTypeValue } from '../types';
+import { TOptionType, TOptionTypeValue, TResolveOptionValueConf } from '../types';
 
 export const isOption = (argument: string): boolean => argument.length > 1 && argument[0] === '-';
 
@@ -15,14 +15,10 @@ export const resolveOptionValue = <T extends TOptionType>({
     optionType,
     value,
     validator
-}: {
-    optionType: T;
-    value?: TOptionTypeValue<T>;
-    validator?: (data: any) => TOptionTypeValue<T>;
-}): TOptionTypeValue<T> | undefined => {
+}: TResolveOptionValueConf<T>): TOptionTypeValue<T> | undefined => {
     if (validator) return validator(value as TOptionTypeValue<T>);
 
-    if (optionType === 'undefined' || optionType === 'boolean') {
+    if (optionType === 'undefined' || optionType === 'boolean' || value === null) {
         return (value ?? true) as TOptionTypeValue<T>;
     }
 
@@ -38,7 +34,6 @@ export const resolveOptionValue = <T extends TOptionType>({
     }
 };
 
-// Extrae la clave de la opción del argumento
 export const extractOptionKey = (argument: string): string | null => {
     const match = argument.match(/^--?([^=]+)(?:=(.*))?$/);
     return match ? match[1] : null;
