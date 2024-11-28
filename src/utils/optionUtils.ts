@@ -1,9 +1,9 @@
 import CommandError from '../CommandError';
 import { TOptionType, TOptionTypeValue, TResolveOptionValueConf } from '../types';
 
-export const isOption = (argument: string): boolean => argument.length > 1 && argument[0] === '-';
+const isOption = (argument: string): boolean => argument.length > 1 && argument[0] === '-';
 
-export const parseOptionValue = (option: string) => {
+const parseOptionValue = (option: string) => {
     const match = option.match(/^--?([^=:]+):?=?(.*)?$/);
     if (!match) return null;
 
@@ -11,7 +11,7 @@ export const parseOptionValue = (option: string) => {
     return { key, value: value ?? null };
 };
 
-export const resolveOptionValue = <T extends TOptionType>({
+const resolveOptionValue = <T extends TOptionType>({
     optionType,
     value,
     validator
@@ -34,7 +34,9 @@ export const resolveOptionValue = <T extends TOptionType>({
     }
 };
 
-export const extractOptionKey = (argument: string): string | null => {
+const extractOptionKey = (argument: string): string | null => {
     const match = argument.match(/^--?([^=]+)(?:=(.*))?$/);
     return match ? match[1] : null;
 };
+
+export { extractOptionKey, isOption, parseOptionValue, resolveOptionValue };

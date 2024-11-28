@@ -1,24 +1,43 @@
 {
     "name": "cli-frw",
     "version": "0.0.0",
-    "main": "src/main.ts",
+    "main": "./dist/mjs/main.mjs",
     "author": "guiurm",
     "scripts": {
-        "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+        "build": "npm run format && rollup -c && npm pack",
         "dev2": "ts-node -r tsconfig-paths/register src/main.ts myapp -url qqq.com",
         "dev": "ts-node -r tsconfig-paths/register src/main.ts ci -p 80 --env=./.env www.doamin.com some_token",
         "dev3": "ts-node -r tsconfig-paths/register src/main.ts myapp -f --verbose --output=file.txt --foo=bar somePositionalArg -- someOtherArg",
-        "format": "prettier --ignore-path .prettierignore --write src/"
+        "format": "prettier --ignore-path .prettierignore --write src/",
+        "postbuild": "node index.mjs"
+    },
+    "type": "module",
+    "files": [
+        "dist",
+        "package.json"
+    ],
+    "types": "./dist/mjs/main.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/cjs/main.cjs",
+            "import": "./dist/mjs/main.mjs"
+        }
     },
     "license": "ISC",
     "description": "",
     "devDependencies": {
+        "@rollup/plugin-typescript": "^12.1.1",
         "@types/node": "^22.9.0",
         "eslint": "^9.14.0",
         "prettier": "^3.3.3",
+        "rollup": "^4.27.4",
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.10",
         "tsconfig-paths": "^4.2.0",
+        "tslib": "^2.8.1",
         "typescript": "^5.6.3"
+    },
+    "dependencies": {
+        "renamer": "^5.0.2"
     }
 }

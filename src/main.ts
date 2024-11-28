@@ -1,8 +1,6 @@
-import CliCommandApp from './CliCommandApp';
-import { genCommand } from './utils/commandUtils';
-
 export * from './CliCommandApp';
 export { default as CliCommandApp } from './CliCommandApp';
+export * from './Command';
 export { default as Command } from './Command';
 export * from './CommandError';
 export { default as CommandError } from './CommandError';
@@ -11,6 +9,7 @@ export * from './types';
 export * from './utils/commandUtils';
 export * from './utils/optionUtils';
 
+/*
 const c = genCommand(
     'ci',
     [
@@ -45,6 +44,5 @@ c.action(({ options, parsedArgs }, optionsParam, argsP) => {
 });
 
 new CliCommandApp([c]).start();
-/*
 
 */

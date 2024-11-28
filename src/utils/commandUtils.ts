@@ -2,7 +2,7 @@ import Command from '../Command';
 import { TArgumentType, TArgumentValue, TOption, TOptionToParsedOption } from '../types';
 import { resolveOptionValue } from './optionUtils';
 
-export const parseOption = <O extends TOption>(option: O, value: string | null) => {
+const parseOption = <O extends TOption>(option: O, value: string | null) => {
     const resolvedValue = resolveOptionValue({
         optionType: option.optionType,
         value,
@@ -19,10 +19,12 @@ export const parseOption = <O extends TOption>(option: O, value: string | null) 
     } as TOptionToParsedOption<O>;
 };
 
-export const genCommand = <Options extends TOption<TArgumentType>[], Arguments extends TArgumentValue<TArgumentType>[]>(
+const genCommand = <Options extends TOption<TArgumentType>[], Arguments extends TArgumentValue<TArgumentType>[]>(
     name: string,
     options?: Options,
     args?: Arguments
 ) => {
     return new Command({ commandName: name, options, arguments: args });
 };
+
+export { genCommand, parseOption };
