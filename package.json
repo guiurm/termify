@@ -8,8 +8,7 @@
         "dev2": "ts-node -r tsconfig-paths/register src/main.ts myapp -url qqq.com",
         "dev": "ts-node -r tsconfig-paths/register src/main.ts ci -p 80 --env=./.env www.doamin.com some_token",
         "dev3": "ts-node -r tsconfig-paths/register src/main.ts myapp -f --verbose --output=file.txt --foo=bar somePositionalArg -- someOtherArg",
-        "format": "prettier --ignore-path .prettierignore --write src/",
-        "postbuild": "node index.mjs"
+        "format": "prettier --ignore-path .prettierignore --write src/"
     },
     "type": "module",
     "files": [

@@ -13,6 +13,25 @@ import {
 } from './types';
 import { extractOptionKey, isOption, parseOptionValue, resolveOptionValue } from './utils/optionUtils';
 
+type TCommandAction<
+    Options extends Array<TOption<TOptionType, any>>,
+    Arguments extends Array<TArgumentValue<TArgumentType>>
+> = (
+    data: {
+        options: TOptionToParsedOption<Options[number]>[];
+        parsedArgs: TArgutmentValueToArgumntParsed<Arguments[number]>[];
+    },
+    options: {
+        [K in TStringToNumber<keyof Options & string> as Options[K]['name']]: Options[K]['required'] extends true
+            ? TOptionTypeValue<Options[K]['optionType']>
+            : TOptionTypeValue<Options[K]['optionType']> | undefined;
+    },
+    args: {
+        [K in TStringToNumber<keyof Arguments & string> as Arguments[K]['name']]: Arguments[K]['required'] extends true
+            ? TOptionTypeValue<Arguments[K]['type']>
+            : TOptionTypeValue<Arguments[K]['type']> | undefined;
+    }
+) => void | Promise<void>;
 export default class Command<
     CommandName extends string,
     Options extends Array<TOption<TOptionType, any>>,
@@ -21,24 +40,7 @@ export default class Command<
     private readonly _commandName: CommandName;
     private readonly _options: Options;
     private readonly _arguments: Arguments;
-    private _action: (
-        data: {
-            options: TOptionToParsedOption<Options[number]>[];
-            parsedArgs: TArgutmentValueToArgumntParsed<Arguments[number]>[];
-        },
-        options: {
-            [K in TStringToNumber<keyof Options & string> as Options[K]['name']]: Options[K]['required'] extends true
-                ? TOptionTypeValue<Options[K]['optionType']>
-                : TOptionTypeValue<Options[K]['optionType']> | undefined;
-        },
-        args: {
-            [K in TStringToNumber<
-                keyof Arguments & string
-            > as Arguments[K]['name']]: Arguments[K]['required'] extends true
-                ? TOptionTypeValue<Arguments[K]['type']>
-                : TOptionTypeValue<Arguments[K]['type']> | undefined;
-        }
-    ) => void | Promise<void>;
+    private _action: TCommandAction<Options, Arguments>;
 
     constructor(
         {
@@ -131,7 +133,7 @@ export default class Command<
         );
     }
 
-    public action(fn: typeof this._action) {
+    public action(fn: TCommandAction<Options, Arguments>) {
         this._action = fn;
     }
 
