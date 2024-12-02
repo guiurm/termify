@@ -8,7 +8,7 @@ export default class CliCommandApp<Commands extends Array<Command<any, any, any>
         this._commands = commands;
     }
 
-    public start() {
+    public async start() {
         const args = process.argv.slice(2);
 
         const commandName = args.shift();
@@ -17,6 +17,6 @@ export default class CliCommandApp<Commands extends Array<Command<any, any, any>
 
         if (!command) throw new CommandError(`Command name: '${commandName}' does not exists`);
 
-        command.parseArguments(args);
+        await command.parseArguments(args);
     }
 }
