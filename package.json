@@ -1,6 +1,6 @@
 {
-    "name": "cli-frw",
-    "version": "0.1.0",
+    "name": "@guiurm/termify",
+    "version": "1.0.0-rc.1",
     "main": "./dist/mjs/main.mjs",
     "author": "guiurm",
     "scripts": {

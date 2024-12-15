@@ -1,7 +1,7 @@
-import Command from './Command';
+import BaseCommand from './Command';
 import CommandError from './CommandError';
 
-export default class CliCommandApp<Commands extends Array<Command<any, any, any>>> {
+export default class Termify<Commands extends Array<BaseCommand<any, any, any>>> {
     private readonly _commands: Commands;
 
     constructor(commands: Commands) {

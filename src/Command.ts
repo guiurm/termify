@@ -32,7 +32,7 @@ type TCommandAction<
             : TOptionTypeValue<Arguments[K]['type']> | undefined;
     }
 ) => void | Promise<void>;
-export default class Command<
+export default class BaseCommand<
     CommandName extends string,
     Options extends Array<TOption<TOptionType, any>>,
     Arguments extends Array<TArgumentValue<TArgumentType>>
