@@ -24,6 +24,9 @@
     },
     "license": "ISC",
     "description": "",
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
     "devDependencies": {
         "@rollup/plugin-typescript": "^12.1.1",
         "@types/node": "^22.9.0",

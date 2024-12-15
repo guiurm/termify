@@ -5,3 +5,4 @@
 .gitignore
 *.wasm
 package-lock.json
+.github
