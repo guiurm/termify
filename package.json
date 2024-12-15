@@ -4,7 +4,7 @@
     "main": "./dist/mjs/main.mjs",
     "author": "guiurm",
     "scripts": {
-        "build": "npm run format && rollup -c && npm pack",
+        "build": "npm run format && rollup -c",
         "dev2": "ts-node -r tsconfig-paths/register src/main.ts myapp -url qqq.com",
         "dev": "ts-node -r tsconfig-paths/register src/main.ts ci -p 80 --env=./.env www.doamin.com some_token",
         "dev3": "ts-node -r tsconfig-paths/register src/main.ts myapp -f --verbose --output=file.txt --foo=bar somePositionalArg -- someOtherArg",
