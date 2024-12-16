@@ -25,7 +25,7 @@
     "license": "ISC",
     "description": "",
     "publishConfig": {
-        "registry": "https://npm.pkg.github.com"
+        "registry": "https://npm.pkg.github.com/@guiurm"
     },
     "devDependencies": {
         "@rollup/plugin-typescript": "^12.1.1",
