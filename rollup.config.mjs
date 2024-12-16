@@ -1,4 +1,5 @@
 import typescript from "@rollup/plugin-typescript";
+import { dts } from "rollup-plugin-dts";
 
 export default [
     {
@@ -8,7 +9,7 @@ export default [
             format: "esm",
             entryFileNames: "main.mjs",
         },
-        plugins: [typescript({ tsconfig: "./tsconfig.json" })],
+        plugins: [typescript({ declaration: false, tsconfig: "./tsconfig.json" })],
     },
     {
         input: "dist/mjs/main.mjs",
@@ -17,6 +18,11 @@ export default [
             format: "cjs",
             entryFileNames: "main.cjs",
         },
-        plugins: [typescript({ tsconfig: "./tsconfig-cjs.json" })],
+        plugins: [typescript({ declaration: false, tsconfig: "./tsconfig-cjs.json" })],
+    },
+    {
+        input: "./src/main.ts",
+        output: [{ file: "dist/types/main.d.ts", format: "es" }],
+        plugins: [dts()],
     },
 ];

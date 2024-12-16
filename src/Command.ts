@@ -1,5 +1,4 @@
 import CommandError from './CommandError';
-import { parseOption } from './main';
 import {
     TArgumentType,
     TArgumentValue,
@@ -11,6 +10,7 @@ import {
     TOptionTypeValue,
     TStringToNumber
 } from './types';
+import { parseOption } from './utils/commandUtils';
 import { extractOptionKey, isOption, parseOptionValue, resolveOptionValue } from './utils/optionUtils';
 
 type TCommandAction<
