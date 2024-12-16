@@ -1,9 +1,9 @@
-export * from './CliCommandApp';
-export { default as CliCommandApp } from './CliCommandApp';
 export * from './Command';
 export { default as Command } from './Command';
 export * from './CommandError';
 export { default as CommandError } from './CommandError';
+export * from './Termify';
+export { default as Termify } from './Termify';
 
 export * from './types';
 export * from './utils/commandUtils';
