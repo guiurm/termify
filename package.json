@@ -1,6 +1,6 @@
 {
     "name": "@guiurm/termify",
-    "version": "1.0.0-rc.2",
+    "version": "1.0.0",
     "main": "./dist/mjs/main.mjs",
     "author": "guiurm",
     "scripts": {
