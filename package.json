@@ -1,6 +1,6 @@
 {
     "name": "@guiurm/termify",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "main": "./dist/mjs/main.mjs",
     "author": "guiurm",
     "scripts": {
@@ -19,7 +19,8 @@
     "exports": {
         ".": {
             "require": "./dist/cjs/main.cjs",
-            "import": "./dist/mjs/main.mjs"
+            "import": "./dist/mjs/main.mjs",
+            "types": "./dist/types/main.d.ts"
         }
     },
     "license": "ISC",
