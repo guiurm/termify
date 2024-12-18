@@ -135,6 +135,7 @@ export default class BaseCommand<
 
     public action(fn: TCommandAction<Options, Arguments>) {
         this._action = fn;
+        return this;
     }
 
     public get name(): string {

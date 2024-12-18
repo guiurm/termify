@@ -35,12 +35,15 @@ const parseOption = <O extends TOption>(option: O, value: string | null) => {
  * @param args - An optional array of command arguments, each defined by a TArgumentValue<TArgumentType>.
  * @returns A new BaseCommand instance with the specified name, options, and arguments.
  */
-
-const genCommand = <Options extends TOption<TArgumentType>[], Arguments extends TArgumentValue<TArgumentType>[]>(
-    name: string,
-    options?: Options,
-    args?: Arguments
-) => {
+const genCommand = <Options extends TOption<TArgumentType>[], Arguments extends TArgumentValue<TArgumentType>[]>({
+    name,
+    args,
+    options
+}: {
+    name: string;
+    options?: Options;
+    args?: Arguments;
+}) => {
     return new BaseCommand({ commandName: name, options, arguments: args });
 };
 
