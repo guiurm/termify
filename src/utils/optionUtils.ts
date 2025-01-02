@@ -1,67 +1,74 @@
-import CommandError from '../CommandError';
-import { TOptionType, TOptionTypeValue, TResolveOptionValueConf } from '../types';
-
-const isOption = (argument: string): boolean => argument.length > 1 && argument[0] === '-';
+import { CommandError } from '../CommandError';
+import { TOption, TOptionToParsedOption } from '../types';
+import { parseValueType } from './commandUtils';
 
 /**
- * Extracts the key and value from a given option string.
- * The option string is expected to be in the format of '--key' or '--key=value'.
- * Returns an object with 'key' and 'value' properties, where 'value' can be null.
- * If the option string does not match the expected format, returns null.
+ * Returns true if the given argument string is an option, false otherwise.
+ *
+ * An option is defined as a string that starts with a hyphen and has at least one
+ * other character.
+ *
+ * @param argument - The argument string to check
+ * @returns true if the argument is an option, false otherwise
  */
-const parseOptionValue = (option: string) => {
+const isOption = (argument: string): boolean => {
+    return argument.length > 1 && argument[0] === '-';
+};
+
+/**
+ * Parses an option string into a key-value pair.
+ *
+ * @param option - The option string to parse, which may include a key and a value
+ * separated by an equal sign or a colon, and may start with one or two hyphens.
+ *
+ * @returns An object containing the extracted key and value. If the option string
+ * does not match the expected pattern, returns an object with both key and value
+ * set to null. If the value is not provided in the option string, it defaults to null.
+ */
+const extractKeyValue = (option: string) => {
     const match = option.match(/^--?([^=:]+):?=?(.*)?$/);
-    if (!match) return null;
+    if (!match) return { key: null, value: null };
 
     const [, key, value] = match;
     return { key, value: value ?? null };
 };
 
 /**
- * Resolves a given option value based on the option's type.
+ * Parses an option and its value into a structured format.
  *
- * @param optionType - The type of the option.
- * @param value - The value of the option to resolve.
- * @param validator - A custom validator function to use for resolving the option value.
- *
- * @returns The resolved value of the option. If the option has type 'undefined' or 'boolean' and the value is null, returns true.
- * If the option has type 'string', returns the value as is.
- * If the option has type 'number', parses the value as a number and returns it. If the parsing fails, throws a CommandError.
- * Otherwise, returns the value as is.
+ * @template O - The type of the option being parsed.
+ * @param option - The option object containing metadata such as name, type, and validation rules.
+ * @param value - The value associated with the option, which may be null.
+ * @returns A parsed option object containing the processed value and option metadata.
+ * @throws CommandError - Throws an error if the option is required but not provided, or if custom validation fails.
  */
-const resolveOptionValue = <T extends TOptionType>({
-    optionType,
-    value,
-    validator
-}: TResolveOptionValueConf<T>): TOptionTypeValue<T> | undefined => {
-    if (validator) return validator(value as TOptionTypeValue<T>);
+const parseOption = <O extends TOption>(option: O, value: string | null): TOptionToParsedOption<O> => {
+    let { flag, name, optionType, alias, required, defaultValue, customTransformer, customValidator } = option;
 
-    if (optionType === 'undefined' || optionType === 'boolean' || value === null) {
-        return (value ?? true) as TOptionTypeValue<T>;
+    let parsedValue = undefined as string | number | boolean | undefined;
+
+    if (required && value === null) throw new CommandError(`The option "${name}" is required.`);
+
+    if (customValidator) {
+        const { error, message = `Error in custom validator for option ${name}` } = customValidator(value || '');
+        if (error) throw new CommandError(message);
     }
 
-    switch (optionType) {
-        case 'string':
-            return value;
-        case 'number':
-            const v = parseFloat(value as string);
-            if (isNaN(v)) throw new CommandError('Value given is not number');
-            return v as TOptionTypeValue<T>;
-        default:
-            return value;
+    if (customTransformer) parsedValue = customTransformer(value);
+    else {
+        parsedValue = parseValueType(optionType, value);
     }
+
+    if (defaultValue !== undefined && parsedValue === undefined) parsedValue = defaultValue;
+
+    return {
+        optionType,
+        required: required ?? false,
+        alias: alias ?? [],
+        flag,
+        value: parsedValue,
+        name
+    } as TOptionToParsedOption<O>;
 };
 
-/**
- * Extracts the key from an option argument string.
- *
- * @param argument - The argument from which to extract the key.
- *
- * @returns The extracted key, or null if the argument does not match the option pattern.
- */
-const extractOptionKey = (argument: string): string | null => {
-    const match = argument.match(/^--?([^=]+)(?:=(.*))?$/);
-    return match ? match[1] : null;
-};
-
-export { extractOptionKey, isOption, parseOptionValue, resolveOptionValue };
+export { extractKeyValue, isOption, parseOption };

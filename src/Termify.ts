@@ -1,7 +1,7 @@
 import BaseCommand from './Command';
-import CommandError from './CommandError';
+import { CommandError } from './CommandError';
 
-export default class Termify<Commands extends Array<BaseCommand<any, any, any>>> {
+export class Termify<Commands extends Array<BaseCommand<any, any, any>>> {
     private readonly _commands: Commands;
 
     constructor(commands: Commands) {

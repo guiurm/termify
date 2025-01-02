@@ -1,18 +1,15 @@
 export * from './Command';
 export { default as Command } from './Command';
 export * from './CommandError';
-export { default as CommandError } from './CommandError';
 export * from './Termify';
-export { default as Termify } from './Termify';
 
 export * from './types';
 export * from './utils/commandUtils';
 export * from './utils/optionUtils';
 
-/*
-const c = genCommand(
-    'ci',
-    [
+/*const c = genCommand({
+    name: 'ci',
+    options: [
         {
             name: 'port',
             optionType: 'number',
@@ -20,7 +17,7 @@ const c = genCommand(
             alias: ['--port'],
             defaultValue: '',
             required: true,
-            customValidator: n => n as number
+            customValidator: n => ({ error: isNaN(Number(n)) })
         },
         {
             name: 'env',
@@ -29,20 +26,24 @@ const c = genCommand(
             alias: ['--env'],
             defaultValue: '',
             required: false,
-            customValidator: n => n as string
+            customValidator: _ => ({ error: false })
+        },
+        {
+            name: 'ssl',
+            flag: '-s',
+            optionType: 'boolean',
+            alias: ['--ssl']
         }
     ] as const,
-    [
+    args: [
         { name: 'url', type: 'string', required: true },
         { name: 'token', type: 'string', required: false }
     ] as const
-);
+});
 
-c.action(({ options, parsedArgs }, optionsParam, argsP) => {
+c.action((optionsParam, argsP) => {
     console.log(optionsParam);
     console.log(argsP);
 });
 
-new CliCommandApp([c]).start();
-
-*/
+new Termify([c]).start();*/

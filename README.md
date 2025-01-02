@@ -55,26 +55,48 @@ Here is an example of a simple CLI application using Termify:
 ```typescript
 import { genCommand } from "@guiurm/termify";
 
-const options = [
-    {
-        name: "port",
-        optionType: "number",
-        flag: "-p",
-        alias: ["--port"],
-        defaultValue: 8080,
-        required: true,
-    },
-];
-
 const arguments = [{ name: "url", type: "string", required: true }];
 
-const command = genCommand("my-command", options, arguments);
-
-command.action((options, args) => {
-    console.log(`Starting server on port ${options.port} with URL ${args.url}`);
+const command = genCommand({
+    name: "ci",
+    options: [
+        {
+            name: "port",
+            optionType: "number",
+            flag: "-p",
+            alias: ["--port"],
+            defaultValue: "",
+            required: true,
+            customValidator: (n) => ({ error: isNaN(Number(n)) }),
+        },
+        {
+            name: "env",
+            optionType: "string",
+            flag: "-e",
+            alias: ["--env"],
+            defaultValue: "",
+            required: false,
+            customValidator: (_) => ({ error: false }),
+        },
+        {
+            name: "ssl",
+            flag: "-s",
+            optionType: "boolean",
+            alias: ["--ssl"],
+        },
+    ] as const,
+    args: [
+        { name: "url", type: "string", required: true },
+        { name: "token", type: "string", required: false },
+    ] as const,
 });
 
-command();
+c.action((optionsParam, argsP) => {
+    console.log(optionsParam);
+    console.log(argsP);
+});
+
+new Termify([c]).start();
 ```
 
-This example defines a command called **my-command** with a single option **port** and a single argument **url**. The command action logs a message to the console with the parsed option and argument values.
+This example defines a command called **ci** with a single option **port** and a single argument **url**. The command action logs a message to the console with the parsed option and argument values.

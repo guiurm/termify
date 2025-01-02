@@ -1,4 +1,4 @@
-import CommandError from './CommandError';
+import { CommandError } from './CommandError';
 import {
     TArgumentType,
     TArgumentValue,
@@ -10,21 +10,19 @@ import {
     TOptionTypeValue,
     TStringToNumber
 } from './types';
-import { parseOption } from './utils/commandUtils';
-import { extractOptionKey, isOption, parseOptionValue, resolveOptionValue } from './utils/optionUtils';
+import { parseArgument } from './utils/commandUtils';
+import { extractKeyValue, isOption, parseOption } from './utils/optionUtils';
 
 type TCommandAction<
     Options extends Array<TOption<TOptionType, any>>,
     Arguments extends Array<TArgumentValue<TArgumentType>>
 > = (
-    data: {
-        options: TOptionToParsedOption<Options[number]>[];
-        parsedArgs: TArgutmentValueToArgumntParsed<Arguments[number]>[];
-    },
     options: {
         [K in TStringToNumber<keyof Options & string> as Options[K]['name']]: Options[K]['required'] extends true
             ? TOptionTypeValue<Options[K]['optionType']>
-            : TOptionTypeValue<Options[K]['optionType']> | undefined;
+            : Options[K]['optionType'] extends 'boolean'
+              ? TOptionTypeValue<Options[K]['optionType']>
+              : TOptionTypeValue<Options[K]['optionType']> | undefined;
     },
     args: {
         [K in TStringToNumber<keyof Arguments & string> as Arguments[K]['name']]: Arguments[K]['required'] extends true
@@ -70,30 +68,16 @@ export default class BaseCommand<
             if (isOption(argument)) option = this._findOption(argument);
 
             if (option) {
-                let { key, value } = parseOptionValue(argument) ?? { key: null, value: null };
+                let { value } = extractKeyValue(argument);
 
-                if (!value) value = remainingArgs.shift() ?? null;
-                if (!value && option.required)
-                    throw new CommandError(`The option "${key}" requires a value as '${option.optionType}'`);
-
-                if (option.required && !value) {
-                    throw new CommandError(`The option "${key}" requires a value`);
-                }
+                if (!value && option.optionType !== 'boolean') value = remainingArgs.shift() ?? null;
 
                 parsedOptions.push(parseOption(option, value));
             } else if (!isOption(argument)) {
                 const arg = this._arguments[argumentCount] as Arguments[number];
                 if (!arg) continue;
 
-                const parsedValue = resolveOptionValue({
-                    optionType: arg.type,
-                    value: argument,
-                    validator: arg.validator
-                });
-                if (!parsedValue && arg.required)
-                    throw new CommandError(`${arg.name} is required ${parsedValue} given`);
-
-                parsedArguments.push({ ...arg, value: parsedValue } as TArgutmentValueToArgumntParsed<typeof arg>);
+                parsedArguments.push(parseArgument(arg, argument));
                 argumentCount++;
             }
         }
@@ -102,6 +86,11 @@ export default class BaseCommand<
             const found = parsedOptions.some(a => a.name === element.name);
 
             if (!found && element.required) throw new CommandError(`${element.name} is not provided`);
+            if (!found && element.optionType === 'boolean')
+                parsedOptions.push({
+                    ...element,
+                    value: false
+                } as TOptionToParsedOption<Options[number]>);
         }
 
         for (const element of this._arguments) {
@@ -116,18 +105,18 @@ export default class BaseCommand<
             .map(o => ({ [o.name]: o.value }))
             .reduce((acc, curr) => ({ ...acc, ...curr }), {}) as any;
 
-        await this._action({ options: parsedOptions, parsedArgs: parsedArguments }, o, a);
+        await this._action(o, a);
     }
 
     private _findOption(argument: string) {
-        const key = extractOptionKey(argument);
+        const { key } = extractKeyValue(argument);
         if (!key) return null;
 
         return (
             this._options.find(option => {
                 return (
-                    extractOptionKey(option.flag) === key ||
-                    option.alias?.some(alias => extractOptionKey(alias) === key)
+                    extractKeyValue(option.flag).key === key ||
+                    option.alias?.some(alias => extractKeyValue(alias).key === key)
                 );
             }) ?? null
         );

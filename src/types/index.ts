@@ -30,7 +30,8 @@ export type TOption<T extends TOptionType = TOptionType, Flag extends TFLag = TF
     alias?: string[];
     required?: boolean;
     defaultValue?: TOptionTypeValue<T>;
-    customValidator?: (data: any) => TOptionTypeValue<T>;
+    customTransformer?: (data: any) => TOptionTypeValue<T>;
+    customValidator?: (data: string) => { error: boolean; message?: string }; //TOptionTypeValue<T>;
 };
 
 export type TParsedOption<T extends TOptionType = TOptionType, Flag extends TFLag = TFLag> = Required<
@@ -48,7 +49,7 @@ export type TArgumentValue<T extends TArgumentType> = {
     type: T;
     name: string;
     required?: boolean;
-    validator?: (data: string) => TOptionTypeValue<T>;
+    validator?: (data: string) => { error: boolean; message?: string }; //(data: string) => TOptionTypeValue<T>;
 };
 export type TArgumentValueParsed<T extends TArgumentType> = TArgumentValue<T> & {
     value: TOptionTypeValue<T>;
