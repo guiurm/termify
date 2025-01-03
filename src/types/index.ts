@@ -27,6 +27,7 @@ export type TOption<T extends TOptionType = TOptionType, Flag extends TFLag = TF
     optionType: T;
     flag: Flag;
     name: string;
+    description?: string;
     alias?: string[];
     required?: boolean;
     defaultValue?: TOptionTypeValue<T>;
@@ -48,6 +49,7 @@ export type TArgumentType = Exclude<TOptionType, 'undefined'>;
 export type TArgumentValue<T extends TArgumentType> = {
     type: T;
     name: string;
+    description?: string;
     required?: boolean;
     validator?: (data: string) => { error: boolean; message?: string }; //(data: string) => TOptionTypeValue<T>;
 };
@@ -68,4 +70,4 @@ export type TCommandConstructor<
     CommandName extends string,
     Options extends Array<TOption<TOptionType, any>>,
     Arguments extends Array<TArgumentValue<TArgumentType>>
-> = { commandName: CommandName; options?: Options; arguments?: Arguments };
+> = { commandName: CommandName; description?: string; options?: Options; arguments?: Arguments };

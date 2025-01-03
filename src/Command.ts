@@ -11,7 +11,7 @@ import {
     TStringToNumber
 } from './types';
 import { parseArgument } from './utils/commandUtils';
-import { extractKeyValue, isOption, parseOption } from './utils/optionUtils';
+import { extractKeyValue, isHelp, isOption, parseOption } from './utils/optionUtils';
 
 type TCommandAction<
     Options extends Array<TOption<TOptionType, any>>,
@@ -37,6 +37,7 @@ class BaseCommand<
     Arguments extends Array<TArgumentValue<TArgumentType>>
 > {
     private readonly _commandName: CommandName;
+    private readonly _description?: string;
     private readonly _options: Options;
     private readonly _arguments: Arguments;
     private _action: TCommandAction<Options, Arguments>;
@@ -44,12 +45,14 @@ class BaseCommand<
     constructor(
         {
             commandName,
+            description,
             arguments: args = [] as unknown as Arguments,
             options = [] as unknown as Options
         }: TCommandConstructor<CommandName, Options, Arguments>,
         action: typeof this._action = () => void 0
     ) {
         this._commandName = commandName;
+        this._description = description;
         this._options = options;
         this._action = action;
         this._arguments = args;
@@ -60,9 +63,15 @@ class BaseCommand<
         const parsedOptions: TOptionToParsedOption<Options[number]>[] = [];
         const parsedArguments: TArgutmentValueToArgumntParsed<Arguments[number]>[] = [];
 
+        if (isHelp(remainingArgs[0])) {
+            console.log(this.help);
+            return;
+        }
+
         let argumentCount = 0;
         while (remainingArgs.length) {
             const argument = remainingArgs.shift();
+
             if (!argument || argument === '--') break;
 
             let option = null as null | Options[number];
@@ -152,6 +161,30 @@ class BaseCommand<
 
     public get name(): string {
         return this._commandName;
+    }
+
+    public get help(): string {
+        return (
+            `${this._commandName} [options] [arguments]\n\n` +
+            ` ${this._description ?? 'No description available for this command'}\n\n` +
+            ' Options:\n' +
+            `${this._options
+                .map(
+                    o =>
+                        '   ' +
+                        o.flag +
+                        ' ' +
+                        o.alias?.join(' ') +
+                        '    ' +
+                        (o.description
+                            ? o.description.toUpperCase()
+                            : (o.required ? 'required' : 'optional') + ' ' + o.optionType) +
+                        '\n'
+                )
+                .join('')}\n\n` +
+            (this._arguments.length > 0 ? ` Arguments:\n` : '') +
+            `${this._arguments.map(a => `   <${a.name}>    ${a.description ? a.description.toUpperCase() : (a.required ? ' required' : ' optional') + ' ' + a.type}`).join('\n')}`
+        );
     }
 }
 

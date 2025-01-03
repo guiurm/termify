@@ -16,6 +16,20 @@ const isOption = (argument: string): boolean => {
 };
 
 /**
+ * Determines if the given string is a help flag.
+ *
+ * Recognizes '--help', '-help', and '-h' as valid help flags.
+ *
+ * @param v - The string to check
+ * @returns true if the string is a help flag, false otherwise
+ */
+const isHelp = (v: string) => {
+    if (!v) return false;
+    if (['--help', '-help', '-h'].includes(v)) return true;
+    else return false;
+};
+
+/**
  * Parses an option string into a key-value pair.
  *
  * @param option - The option string to parse, which may include a key and a value
@@ -71,4 +85,4 @@ const parseOption = <O extends TOption>(option: O, value: string | null): TOptio
     } as TOptionToParsedOption<O>;
 };
 
-export { extractKeyValue, isOption, parseOption };
+export { extractKeyValue, isHelp, isOption, parseOption };
