@@ -1,5 +1,7 @@
+import { Termify } from './Termify';
+import { genCommand } from './utils/commandUtils';
+
 export * from './Command';
-export { default as Command } from './Command';
 export * from './CommandError';
 export * from './Termify';
 
@@ -7,7 +9,7 @@ export * from './types';
 export * from './utils/commandUtils';
 export * from './utils/optionUtils';
 
-/*const c = genCommand({
+const c = genCommand({
     name: 'ci',
     options: [
         {
@@ -15,8 +17,8 @@ export * from './utils/optionUtils';
             optionType: 'number',
             flag: '-p',
             alias: ['--port'],
-            defaultValue: '',
-            required: true,
+            defaultValue: '5173',
+            required: false,
             customValidator: n => ({ error: isNaN(Number(n)) })
         },
         {
@@ -46,4 +48,4 @@ c.action((optionsParam, argsP) => {
     console.log(argsP);
 });
 
-new Termify([c]).start();*/
+new Termify([c]).start();

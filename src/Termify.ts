@@ -1,4 +1,4 @@
-import BaseCommand from './Command';
+import { BaseCommand } from './Command';
 import { CommandError } from './CommandError';
 
 export class Termify<Commands extends Array<BaseCommand<any, any, any>>> {

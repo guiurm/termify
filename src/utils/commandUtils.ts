@@ -1,4 +1,4 @@
-import BaseCommand from '../Command';
+import { BaseCommand } from '../Command';
 import { CommandError } from '../CommandError';
 import { TArgumentType, TArgumentValue, TArgutmentValueToArgumntParsed, TOption, TOptionType } from '../types';
 

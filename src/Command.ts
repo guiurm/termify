@@ -30,7 +30,8 @@ type TCommandAction<
             : TOptionTypeValue<Arguments[K]['type']> | undefined;
     }
 ) => void | Promise<void>;
-export default class BaseCommand<
+
+class BaseCommand<
     CommandName extends string,
     Options extends Array<TOption<TOptionType, any>>,
     Arguments extends Array<TArgumentValue<TArgumentType>>
@@ -86,7 +87,29 @@ export default class BaseCommand<
             const found = parsedOptions.some(a => a.name === element.name);
 
             if (!found && element.required) throw new CommandError(`${element.name} is not provided`);
-            if (!found && element.optionType === 'boolean')
+
+            if (!found && element.defaultValue !== undefined)
+                switch (element.optionType) {
+                    case 'string':
+                        parsedOptions.push({
+                            ...element,
+                            value: element.defaultValue
+                        } as TOptionToParsedOption<Options[number]>);
+                        break;
+                    case 'number':
+                        parsedOptions.push({
+                            ...element,
+                            value: element.defaultValue
+                        } as TOptionToParsedOption<Options[number]>);
+                        break;
+                    case 'boolean':
+                        parsedOptions.push({
+                            ...element,
+                            value: element.defaultValue
+                        } as TOptionToParsedOption<Options[number]>);
+                        break;
+                }
+            else if (!found && element.optionType === 'boolean')
                 parsedOptions.push({
                     ...element,
                     value: false
@@ -131,3 +154,5 @@ export default class BaseCommand<
         return this._commandName;
     }
 }
+
+export { BaseCommand };
