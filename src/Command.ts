@@ -97,28 +97,7 @@ class BaseCommand<
 
             if (!found && element.required) throw new CommandError(`${element.name} is not provided`);
 
-            if (!found && element.defaultValue !== undefined)
-                switch (element.optionType) {
-                    case 'string':
-                        parsedOptions.push({
-                            ...element,
-                            value: element.defaultValue
-                        } as TOptionToParsedOption<Options[number]>);
-                        break;
-                    case 'number':
-                        parsedOptions.push({
-                            ...element,
-                            value: element.defaultValue
-                        } as TOptionToParsedOption<Options[number]>);
-                        break;
-                    case 'boolean':
-                        parsedOptions.push({
-                            ...element,
-                            value: element.defaultValue
-                        } as TOptionToParsedOption<Options[number]>);
-                        break;
-                }
-            else if (!found && element.optionType === 'boolean')
+            if (!found && element.optionType === 'boolean')
                 parsedOptions.push({
                     ...element,
                     value: false
