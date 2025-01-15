@@ -1,13 +1,16 @@
 {
     "name": "@guiurm/termify",
     "version": "2.1.0",
-    "main": "./dist/mjs/main.mjs",
+    "main": "./dist/main.mjs",
+    "private": true,
     "author": "guiurm",
     "scripts": {
-        "build": "npm run format && rollup -c",
+        "build": "npm run format && npm run build:mjs && npm run build:cjs",
         "dev2": "ts-node -r tsconfig-paths/register src/main.ts myapp -url qqq.com",
         "dev": "node dist/cjs/main.cjs ci -s --env=./.env www.doamin.com some_token",
         "dev3": "ts-node -r tsconfig-paths/register src/main.ts myapp -f --verbose --output=file.txt --foo=bar somePositionalArg -- someOtherArg",
+        "build:mjs": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+        "build:cjs": "tsc --project tsconfig-cjs.json && tsc-alias -p tsconfig-cjs.json",
         "format": "prettier --ignore-path .prettierignore --write src/"
     },
     "type": "module",
@@ -15,12 +18,12 @@
         "dist",
         "package.json"
     ],
-    "types": "./dist/types/main.d.ts",
+    "types": "./dist/main.d.ts",
     "exports": {
         ".": {
-            "require": "./dist/cjs/main.cjs",
-            "import": "./dist/mjs/main.mjs",
-            "types": "./dist/types/main.d.ts"
+            "require": "./dist/main.cjs",
+            "import": "./dist/main.mjs",
+            "types": "./dist/main.d.ts"
         }
     },
     "license": "ISC",
@@ -40,8 +43,5 @@
         "tsconfig-paths": "^4.2.0",
         "tslib": "^2.8.1",
         "typescript": "^5.6.3"
-    },
-    "dependencies": {
-        "renamer": "^5.0.2"
     }
 }

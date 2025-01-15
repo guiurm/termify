@@ -1,28 +1,27 @@
-import typescript from "@rollup/plugin-typescript";
 import { dts } from "rollup-plugin-dts";
 
 export default [
     {
-        input: "src/main.ts",
+        input: "build/mjs/main.js",
         output: {
-            dir: "dist/mjs",
+            dir: "dist",
             format: "esm",
             entryFileNames: "main.mjs",
         },
-        plugins: [typescript({ declaration: false, tsconfig: "./tsconfig.json" })],
+        //plugins: [typescript({ declaration: false, tsconfig: "./tsconfig.json" })],
     },
     {
-        input: "dist/mjs/main.mjs",
+        input: "build/cjs/main.js",
         output: {
-            dir: "dist/cjs",
+            dir: "dist",
             format: "cjs",
             entryFileNames: "main.cjs",
         },
-        plugins: [typescript({ declaration: false, tsconfig: "./tsconfig-cjs.json" })],
+        //plugins: [typescript({ declaration: false, tsconfig: "./tsconfig-cjs.json" })],
     },
     {
-        input: "./src/main.ts",
-        output: [{ file: "dist/types/main.d.ts", format: "es" }],
+        input: "build/mjs/main.d.ts",
+        output: [{ file: "dist/main.d.ts", format: "es" }],
         plugins: [dts()],
     },
 ];
