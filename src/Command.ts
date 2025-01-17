@@ -149,20 +149,29 @@ class BaseCommand<
             ' Options:\n' +
             `${this._options
                 .map(
-                    o =>
+                    currentOption =>
                         '   ' +
-                        o.flag +
+                        currentOption.flag +
                         ' ' +
-                        o.alias?.join(' ') +
+                        currentOption.alias?.join(' ') +
                         '    ' +
-                        (o.description
-                            ? o.description.toUpperCase()
-                            : (o.required ? 'required' : 'optional') + ' ' + o.optionType) +
+                        (currentOption.description && currentOption.description.length > 0
+                            ? currentOption.description.toUpperCase()
+                            : (currentOption.required ? 'required' : 'optional') + ' ' + currentOption.optionType) +
                         '\n'
                 )
                 .join('')}\n\n` +
             (this._arguments.length > 0 ? ` Arguments:\n` : '') +
-            `${this._arguments.map(a => `   <${a.name}>    ${a.description ? a.description.toUpperCase() : (a.required ? ' required' : ' optional') + ' ' + a.type}`).join('\n')}`
+            `${this._arguments
+                .map(
+                    currentArgument =>
+                        `   <${currentArgument.name}>    ${
+                            currentArgument.description && currentArgument.description.length > 0
+                                ? currentArgument.description.toUpperCase()
+                                : (currentArgument.required ? ' required' : ' optional') + ' ' + currentArgument.type
+                        }`
+                )
+                .join('\n')}`
         );
     }
 }
